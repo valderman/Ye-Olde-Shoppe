@@ -1,0 +1,15 @@
+name: YeOldeShoppe
+main: cc.ekblad.yeoldeshoppe.YeOldeShoppe
+version: 0.1
+
+commands:
+    ywarp:
+        description: Add and remove warp points.
+        usage: /<command> <add|del>
+        permission: yeoldeshoppe.warps
+        permission-message: Sorry, you can't do that!
+
+permissions:
+    yeoldshoppe.opshop:
+        description: Allows you to destroy and access the inventory of shops you do not own
+        default: op

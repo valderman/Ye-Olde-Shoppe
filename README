@@ -1,0 +1,79 @@
+Ye Olde Shoppe, v0.1
+--
+A lightweight Bukkit plugin for creating sign shops and paid teleports.
+
+
+** Building
+
+Import the entire src directory into Eclipse, get the latest Bukkit snapshot,
+ add it to the project as a dependency (link and instructions for doing
+that can be found at
+http://wiki.bukkit.org/Plugin_Tutorial#Reference_the_Bukkit_API) and export
+the entire thing as a jar file. Place in Bukkit plugin directory and reload.
+
+
+** Playing
+
+To place a shop, first attach a sign to a wall and format its text as follows:
+-- (start of sign) --
+<name of resource you're buying/selling>
+Buy <amount> for <cost>g
+Sell <amount> for <cost>g
+<this line intentionally left blank>
+-- (end of sign) --
+
+You can leave out either the Buy or the Sell line, but not both. If you've
+done it right, your name will appear in brackets on the sign's bottom line.
+Now, place a chest under the sign and fill it with the amount of goods you
+want to put up for sale and/or the amount of gold you want to buy other
+people's resources for.
+
+For example, if I wanted to sell diamonds for 10 gold ingots apiece and buy
+them for 5, I'd put this on my sign:
+-- (start of sign) --
+Diamond
+Buy 1 for 10g
+Sell 1 for 5g
+
+-- (end of sign) --
+...and then I'd place a chest underneath and fill it with gold ingots and
+diamonds.
+
+You can also place paid teleports. To do this, you need to set a waypoint.
+To set a waypoint, walk where you want the waypoint to be, then say
+"/ywarp add <name>" where <name> is whatever you want to call your waypoint.
+At the moment, only ops can add waypoints.
+
+You then place your teleport just like you would a shop, but format your sign
+like so:
+-- (start of sign) --
+<waypoint name>
+
+Fare: <cost>g
+
+-- (end of sign) --
+You may use both the first and second line for the waypoint name if it's long;
+the newline between them will be treated as a space, so if you put:
+My
+House
+It will be interpreted as the waypoint "My House".
+
+To travel or buy resources, simply right click on a shop sign with a gold
+ingot in hand. The correct amount of gold will be transferred from your
+inventory to the chest under the sign. To sell resources, right click a
+shop sign while holding the resource you want to sell.
+
+Shops can't be looted or destroyed by anyone but its owner or an op.
+
+
+** Known bugs
+
+- Shops can be destroyed by pistons.
+- Waypoints aren't owned, so anyone with the privileges to add new waypoints
+  can overwrite yours.
+
+
+** License
+
+This work is made available to you under the terms of the WTFPL.
+There are no restrictions on its use, so go ahead and have fun.
