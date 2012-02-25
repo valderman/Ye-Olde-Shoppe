@@ -94,6 +94,9 @@ public class SignShopManager {
         } catch (SignShop.NotYourSignException e) {
             p.sendMessage("Your name is not on the sign.");
             return false;
+        } catch (SignShop.AlreadyShopException e) {
+            p.sendMessage("You can't attach two shop signs to the same block.");
+            return false;
         }
     }
     

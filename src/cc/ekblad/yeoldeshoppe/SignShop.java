@@ -43,6 +43,20 @@ public class SignShop implements Serializable {
         static final long serialVersionUID = 0;
     }
 
+    public class AlreadyShopException extends Exception {
+        private final String msg;
+
+        @Override
+        public String getMessage() {
+            return msg;
+        }
+        
+        public AlreadyShopException(String msg) {
+            this.msg = msg;
+        }
+        static final long serialVersionUID = 0;
+    }
+
     private static final String TOO_EXPENSIVE_FOR_YOU =
             "I'm sorry, but you can't afford that!";
     private static final String OUT_OF_ORDER =
@@ -92,7 +106,8 @@ public class SignShop implements Serializable {
      * @throws NotAShopSignException
      */
     public SignShop(Location loc, Block b, Player p)
-            throws NotAShopSignException, NotYourSignException {
+            throws NotAShopSignException, NotYourSignException,
+                   AlreadyShopException {
         
         // We can only place a box below a sign if the sign is on a wall... 
         if(b.getType() != Material.WALL_SIGN) {
@@ -122,8 +137,13 @@ public class SignShop implements Serializable {
         this.chest = new Vec3(b.getRelative(BlockFace.DOWN).getLocation().toVector());
         org.bukkit.material.Sign signdata;
         signdata = (org.bukkit.material.Sign)b.getState().getData();
-        this.block = new Vec3(b.getRelative(signdata.getAttachedFace()).getLocation().toVector());
         
+        Vector blockVector = b.getRelative(signdata.getAttachedFace()).getLocation().toVector();
+        if(SignShopManager.getInstance().getShopAt(blockVector.toLocation(p.getWorld())) != null) {
+            throw new AlreadyShopException("One block can't be part of two shops!");
+        }
+        this.block = new Vec3(blockVector);
+
         if(lines[2].matches(TRAVEL_REGEX)) {
             // It's a travel shop!
             this.isTravelShop = true;
@@ -262,6 +282,7 @@ public class SignShop implements Serializable {
                     }
                 } else {
 
+                    // Player clicked with gold, so we're selling
                     if(sellingAt > 0) {
                         if(chest.contains(selling, sellingNo)) {
                             ItemStack wares = new ItemStack(selling, sellingNo);
@@ -279,6 +300,8 @@ public class SignShop implements Serializable {
                 p.sendMessage(TOO_EXPENSIVE_FOR_YOU);
             }
         } else if(p.getItemInHand().getType() == this.selling) {
+            // Player clicked with resource, so we're buying 
+            
             ItemStack price = new ItemStack(currency, buyingAt);
             if(chest.contains(currency, buyingAt)) {
                 ItemStack wares = new ItemStack(selling, buyingNo);
