@@ -32,7 +32,8 @@ public class SignShopManager {
     
     /**
      * Load old shops from file. Or at least make a try; Java serialization is
-     * not to be trusted.
+     * not to be trusted. Should probably replace this with some SQLite or
+     * something.
      * @param file
      * @return
      */
@@ -125,12 +126,8 @@ public class SignShopManager {
         }
         
         blk = b.getRelative(BlockFace.SOUTH);
-        if(blk.getType() == Material.CHEST &&
-            null != shops.get(blk.getLocation().toVector())) {
-             return true;
-         }
-
-        return false;
+        return (blk.getType() == Material.CHEST &&
+                null != shops.get(blk.getLocation().toVector()));
     }
     
     /**

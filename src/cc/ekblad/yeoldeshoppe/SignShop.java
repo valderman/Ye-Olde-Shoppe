@@ -17,43 +17,25 @@ public class SignShop implements Serializable {
 
     public class NotAShopSignException extends Exception {
         private final String msg;
-
         @Override
-        public String getMessage() {
-            return msg;
-        }
-        
-        public NotAShopSignException(String msg) {
-            this.msg = msg;
-        }
+        public String getMessage() {return msg;}
+        public NotAShopSignException(String msg) {this.msg = msg;}
         static final long serialVersionUID = 0;
     }
 
     public class NotYourSignException extends Exception {
         private final String msg;
-
         @Override
-        public String getMessage() {
-            return msg;
-        }
-        
-        public NotYourSignException(String msg) {
-            this.msg = msg;
-        }
+        public String getMessage() {return msg;}
+        public NotYourSignException(String msg) {this.msg = msg;}
         static final long serialVersionUID = 0;
     }
 
     public class AlreadyShopException extends Exception {
         private final String msg;
-
         @Override
-        public String getMessage() {
-            return msg;
-        }
-        
-        public AlreadyShopException(String msg) {
-            this.msg = msg;
-        }
+        public String getMessage() {return msg;}
+        public AlreadyShopException(String msg) {this.msg = msg;}
         static final long serialVersionUID = 0;
     }
 
@@ -107,6 +89,8 @@ public class SignShop implements Serializable {
      * @param b Shop block
      * @param p Name of the block's owner
      * @throws NotAShopSignException
+     * @throws NotYourSignException
+     * @throws AlreadyShopException
      */
     public SignShop(Location loc, Block b, Player p)
             throws NotAShopSignException, NotYourSignException,

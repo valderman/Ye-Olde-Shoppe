@@ -17,10 +17,6 @@ public class EventListener implements Listener {
     }
     
     @EventHandler
-    public void onLogin(PlayerJoinEvent evt) {
-    }
-    
-    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent evt) {
         if(!evt.isCancelled() && evt.hasBlock()) {
             Block b = evt.getClickedBlock();
