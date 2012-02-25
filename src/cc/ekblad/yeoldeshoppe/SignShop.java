@@ -65,6 +65,8 @@ public class SignShop implements Serializable {
             "I'm sorry but we're currently all out of stock. Please come back later!";
     private static final String OUT_OF_CASH =
             "I'm sorry but we can't afford to buy anything from you at the moment.";
+    private static final String ONLY_BUY_QUANTITY_OF =
+            "I'm sorry but we only buy that item in quantities of";
     private static final String THANKS =
             "Thank you very much, please come again!";
     private static final String SQUADALA =
@@ -93,8 +95,8 @@ public class SignShop implements Serializable {
     private final int sellingNo; // When buying, you get this many items
     private final int buyingNo;  // When selling, you get this many items
     private final Material currency = Material.GOLD_INGOT; // hardcode for now
-    private final Material selling;
-    private final byte sellingItemData;
+    private final Material shopItem; // material this shop is buying/selling
+    private final byte shopItemData;
     private final String owner;
     private final Vec3 sign, block, chest; 
     
@@ -155,19 +157,19 @@ public class SignShop implements Serializable {
             }
             this.sellingAt = Integer.parseInt(lines[2].replaceFirst(TRAVEL_REGEX, "$1"));
             this.buyingAt = sellingNo = buyingNo = 0;
-            this.selling = null;
-            this.sellingItemData = 0;
+            this.shopItem = null;
+            this.shopItemData = 0;
         } else {
             boolean isShopAtAll = false;
 
             String itemid = lines[0].replace(' ', '_').toUpperCase();
             if(itemid.equals("SLAVES")) {
-                this.selling = Material.MONSTER_EGG;
-                this.sellingItemData = 120;
+                this.shopItem = Material.MONSTER_EGG;
+                this.shopItemData = 120;
             } else {
-                this.sellingItemData = 0;
+                this.shopItemData = 0;
                 try {
-                    this.selling = Material.valueOf(itemid);
+                    this.shopItem = Material.valueOf(itemid);
                 } catch(IllegalArgumentException e) {
                     // An illegal argument here means we haven't been given a
                     // proper item ID, so this isn't a shop.
@@ -292,8 +294,8 @@ public class SignShop implements Serializable {
 
                     // Player clicked with gold, so we're selling
                     if(sellingAt > 0) {
-                        if(chest.contains(selling, sellingNo)) {
-                            ItemStack wares = new ItemStack(selling, sellingNo, (short)0, sellingItemData);
+                        if(chest.contains(shopItem, sellingNo)) {
+                            ItemStack wares = new ItemStack(shopItem, sellingNo, (short)0, shopItemData);
                             p.getInventory().removeItem(price);
                             chest.removeItem(wares);
                             chest.addItem(price);
@@ -307,19 +309,23 @@ public class SignShop implements Serializable {
             } else {
                 p.sendMessage(TOO_EXPENSIVE_FOR_YOU);
             }
-        } else if(p.getItemInHand().getType() == this.selling) {
+        } else if(p.getItemInHand().getType() == this.shopItem) {
             // Player clicked with resource, so we're buying 
             
-            ItemStack price = new ItemStack(currency, buyingAt);
-            if(chest.contains(currency, buyingAt)) {
-                ItemStack wares = new ItemStack(selling, buyingNo, (short)0, sellingItemData);
-                chest.removeItem(price);
-                p.getInventory().removeItem(wares);
-                chest.addItem(wares);
-                p.getInventory().addItem(price);
-                p.sendMessage(THANKS);
+            if(p.getInventory().contains(shopItem, buyingNo)) {
+                if(chest.contains(currency, buyingAt)) {
+                    ItemStack price = new ItemStack(currency, buyingAt);
+                    ItemStack wares = new ItemStack(shopItem, buyingNo, (short)0, shopItemData);
+                    chest.removeItem(price);
+                    p.getInventory().removeItem(wares);
+                    chest.addItem(wares);
+                    p.getInventory().addItem(price);
+                    p.sendMessage(THANKS);
+                } else {
+                    p.sendMessage(OUT_OF_CASH);
+                }
             } else {
-                p.sendMessage(OUT_OF_CASH);
+                p.sendMessage(ONLY_BUY_QUANTITY_OF + " " + buyingNo);
             }
         }
         p.updateInventory();
