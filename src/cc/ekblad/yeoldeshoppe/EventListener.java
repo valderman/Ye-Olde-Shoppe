@@ -62,6 +62,11 @@ public class EventListener implements Listener {
     
     @EventHandler
     public void onSignChange(SignChangeEvent evt) {
+        Environment env = evt.getBlock().getLocation().getWorld().getEnvironment();
+        if(env != World.Environment.NORMAL) {
+            return;
+        }
+
         if(evt.getLine(3).isEmpty()) {
             if(evt.getLine(2).matches(SignShop.TRAVEL_REGEX) ||
                evt.getLine(2).matches(SignShop.BUYING_REGEX) ||
@@ -73,6 +78,11 @@ public class EventListener implements Listener {
     
     @EventHandler
     public void onBlockBreak(BlockBreakEvent evt) {
+        Environment env = evt.getBlock().getLocation().getWorld().getEnvironment();
+        if(env != World.Environment.NORMAL) {
+            return;
+        }
+
         if(!plugin.shops.tryBreak(evt.getPlayer(), evt.getBlock().getLocation())) {
             evt.setCancelled(true);
         }
