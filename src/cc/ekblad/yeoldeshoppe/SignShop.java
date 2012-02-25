@@ -227,9 +227,9 @@ public class SignShop implements Serializable {
     public boolean tryRemove(Player p) {
         if(tamperingAllowed(p)) {
             SignShopManager manager = SignShopManager.getInstance();
-            manager.shops.remove(sign);
-            manager.shops.remove(chest);
-            manager.shops.remove(block);
+            manager.shops.remove(sign.toVector());
+            manager.shops.remove(chest.toVector());
+            manager.shops.remove(block.toVector());
             return true;
         }
         return false;
