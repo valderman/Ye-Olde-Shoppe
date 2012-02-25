@@ -94,6 +94,7 @@ public class SignShop implements Serializable {
     private final int buyingNo;  // When selling, you get this many items
     private final Material currency = Material.GOLD_INGOT; // hardcode for now
     private final Material selling;
+    private final byte sellingItemData;
     private final String owner;
     private final Vec3 sign, block, chest; 
     
@@ -155,16 +156,23 @@ public class SignShop implements Serializable {
             this.sellingAt = Integer.parseInt(lines[2].replaceFirst(TRAVEL_REGEX, "$1"));
             this.buyingAt = sellingNo = buyingNo = 0;
             this.selling = null;
+            this.sellingItemData = 0;
         } else {
             boolean isShopAtAll = false;
 
-            try {
-                String itemid = lines[0].replace(' ', '_').toUpperCase();
-                this.selling = Material.valueOf(itemid);
-            } catch(IllegalArgumentException e) {
-                // An illegal argument here means we haven't been given a
-                // proper item ID, so this isn't a shop.
-                throw new NotAShopSignException("First line not an item ID");
+            String itemid = lines[0].replace(' ', '_').toUpperCase();
+            if(itemid.equals("SLAVES")) {
+                this.selling = Material.MONSTER_EGG;
+                this.sellingItemData = 120;
+            } else {
+                this.sellingItemData = 0;
+                try {
+                    this.selling = Material.valueOf(itemid);
+                } catch(IllegalArgumentException e) {
+                    // An illegal argument here means we haven't been given a
+                    // proper item ID, so this isn't a shop.
+                    throw new NotAShopSignException("First line not an item ID");
+                }
             }
 
             this.isTravelShop = false;
@@ -285,7 +293,7 @@ public class SignShop implements Serializable {
                     // Player clicked with gold, so we're selling
                     if(sellingAt > 0) {
                         if(chest.contains(selling, sellingNo)) {
-                            ItemStack wares = new ItemStack(selling, sellingNo);
+                            ItemStack wares = new ItemStack(selling, sellingNo, (short)0, sellingItemData);
                             p.getInventory().removeItem(price);
                             chest.removeItem(wares);
                             chest.addItem(price);
@@ -304,7 +312,7 @@ public class SignShop implements Serializable {
             
             ItemStack price = new ItemStack(currency, buyingAt);
             if(chest.contains(currency, buyingAt)) {
-                ItemStack wares = new ItemStack(selling, buyingNo);
+                ItemStack wares = new ItemStack(selling, buyingNo, (short)0, sellingItemData);
                 chest.removeItem(price);
                 p.getInventory().removeItem(wares);
                 chest.addItem(wares);
