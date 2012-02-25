@@ -17,7 +17,7 @@ public class YeOldeShoppe extends JavaPlugin {
     public void onEnable() {
         SignShopManager.initialize(this, getDataFolder() + "/shops.bin");
         shops = SignShopManager.getInstance();
-        getCommand("ywarp").setExecutor(new YWarpHandler(this));
+        getCommand("ywp").setExecutor(new YWarpHandler(this));
         warps.load(getConfig().getConfigurationSection("warps"));
         new EventListener(this); // We don't need a reference to this, so...
     }
